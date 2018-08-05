@@ -21,6 +21,7 @@ import time
 import random
 import numpy as np
 from cnf import get_cnf
+from cnf import clause_to_num as convert
 
 sat_cnf = """
 c Example DIMACS 3-sat, with 3 solutions: 1 -2 3 0, -1 -2 -3 0, 1 2 -3 0
@@ -55,25 +56,26 @@ p cnf 3 7
 -1 -2 -3
 """
 
-
+NUM_ITEMS = 10
+location = random.randint(0,NUM_ITEMS-1)
+print("location: {}".format(str(location)))
+risk_sat = get_cnf(NUM_ITEMS,location)
+print(risk_sat)
 
 params = {
     'problem': {'name': 'search'},
     'algorithm': {'name': 'Grover'},
-    'oracle': {'name': 'SAT', 'cnf': safe_sat_cnf_search},
+    'oracle': {'name': 'SAT', 'cnf': risk_sat},
     'backend': {'name': 'local_qasm_simulator'}
 }
-
-NUM_ITEMS = 3
-location = random.randint(0,NUM_ITEMS)
-risk_sat = get_cnf(NUM_ITEMS,location)
 
 start = time.time()
 result = run_algorithm(params)
 end = time.time()
 
 print('job took {} seconds'.format(end-start))
-print(result['result'])
+answer = result['result']
+print("{} or {}".format(answer, convert(answer)))
 
 
 # classical version search
