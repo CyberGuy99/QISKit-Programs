@@ -7,7 +7,7 @@ class Bitstring_Convert_Test(unittest.TestCase):
     expected_clauses = []
     def setUp(self):
         self.bitstrings = ["0","1","00","01","10","11"]
-        self.expected_clauses = ["-1","1","-1 -2", "-1 2", "1 -2", "1 2"]
+        self.expected_clauses = ["-1 0","1 0","-1 -2 0", "-1 2 0", "1 -2 0", "1 2 0"]
 
     def test(self):
         for i,bs in enumerate(self.bitstrings):
@@ -19,9 +19,9 @@ class Negation_Test(unittest.TestCase):
     expected_bitstrings = []
     expected_negations = []
     def setUp(self):
-        self.sizes = [2,2,3,3,3]
+        self.sizes = [1,2,3,3,3]
         self.all_solutions = [[0],[0,1],[1],[0,2],[0,1,2]]
-        self.all_expected_negations = [["10","01","11"],["10","11"],\
+        self.all_expected_negations = [["1"],["10","11"],\
                 ["00","10","11"], ["01","11"],["11"]]
         self.numbits = [math.ceil(math.log(N+1,2)) for N in self.sizes]
 

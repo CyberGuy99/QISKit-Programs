@@ -1,8 +1,12 @@
 import math
 
+'''
+N is the expected max_value, the real max_value is usually shifted up
+to match the max value associated with the number of bits necessary
+'''
 def get_negations(N, solutions):
     numbits = math.ceil(math.log(N+1,2))
-    max_value = int(math.pow(numbits,2)) - 1
+    max_value = int(math.pow(2,numbits)) - 1
 
     #handle case where solutions may be tuple of len 1
     if isinstance(solutions, int):
@@ -11,7 +15,7 @@ def get_negations(N, solutions):
         solutions = list(solutions)
 
     bitstrings = [make_bitstring(soln,numbits) for soln in solutions]
-    all_bitstrings = [make_bitstring(i,numbits) for i in range(max_value)]
+    all_bitstrings = [make_bitstring(i,numbits) for i in range(max_value + 1)]
     negations = []
     for bitstring in all_bitstrings:
         if bitstring not in bitstrings:
@@ -25,7 +29,7 @@ def negate(bitstring):
     negation = [ '0' if bit == '1' else '1' for bit in bitstring]
     return negation
 
-def make_cnf(N, negations, solutions):
+def make_cnf(negations, solutions):
     dimacs_solutions = [bitstring_to_clause(soln) for soln in solutions]
     cnf_buffer = ["c DIMACS 3-sat with {} solution(s): {}".format(\
             str(len(solutions)), ','.join(dimacs_solutions))]
@@ -45,9 +49,6 @@ def bitstring_to_clause(bitstring):
     clause = ' '.join(clause_buffer)
     return clause
 
-def get_cnf(N, solutions):
-    negs, solns = get_negations(N, solutions)
-    return make_cnf(N, negs, solns)
 
 def clause_to_num(arr,binary=False):
     buff = []
@@ -60,3 +61,13 @@ def clause_to_num(arr,binary=False):
     if binary:
         return bitstring
     return int(bitstring, 2)
+
+'''
+main useful method
+creates a cnf string given N and array of solutions in base 10
+N is the expected max value of the base 10 search range
+see above comments for more on N
+'''
+def get_cnf(N, solutions):
+    negs, solns = get_negations(N, solutions)
+    return make_cnf(negs, solns)
